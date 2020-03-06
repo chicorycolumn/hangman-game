@@ -1,26 +1,55 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import "./App.css";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
+class App extends React.Component {
+  state = {
+    hiddenWord: "SEVEN",
+    displayWord: "_____",
+    guessesRemaining: 10
+  };
+
+  handleKeyPress = event => {
+    this.setState(currentState => {
+      if (currentState.hiddenWord.toLowerCase().includes(event.key)) {
+        let newWordToDisplay = currentState.hiddenWord
+          .toLowerCase()
+          .split("")
+          .map((letter, index) => {
+            if (letter.toLowerCase() === event.key) {
+              return letter;
+            } else {
+              if (currentState.displayWord[index] !== "_") {
+                return currentState.displayWord[index];
+              } else return "_";
+            }
+          });
+
+        return { displayWord: newWordToDisplay.join("") };
+      } else {
+        return { guessesRemaining: currentState.guessesRemaining - 1 };
+      }
+    });
+  };
+
+  componentDidMount() {
+    document.addEventListener("keydown", this.handleKeyPress);
+  }
+
+  render() {
+    return (
+      <div className="App">
+        <header className="Manhang"></header>
+        <p>Hello and welcome to Han that Mang!</p>
         <p>
-          Edit <code>src/App.js</code> and save to reload.
+          {this.state.displayWord
+            .split("")
+            .join(" ")
+            .toUpperCase()}
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+        <p>You have {this.state.guessesRemaining} guesses remaining!</p>
+      </div>
+    );
+  }
 }
 
 export default App;
